@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Type checking / linting cache
+.mypy_cache/
+.ruff_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Agent workspace output (keep .gitkeep)
+workspace/*
+!workspace/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db

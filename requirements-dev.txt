@@ -1,0 +1,9 @@
+-r requirements.txt
+pytest==9.0.3
+pytest-asyncio==1.4.0
+pytest-cov==7.1.0
+black==26.5.1
+ruff==0.15.16
+mypy==2.1.0
+bandit==1.9.4
+pre-commit==4.6.0

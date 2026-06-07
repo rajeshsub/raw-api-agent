@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>raw-api-agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+      background: #f5f5f7;
+      color: #1a1a1a;
+      padding: 3.5rem 1.5rem;
+      font-size: 16px;
+    }
+
+    .container { max-width: 740px; margin: 0 auto; }
+
+    header { margin-bottom: 2.25rem; }
+    .brand {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 0.35rem;
+    }
+    .brand-mark {
+      width: 40px; height: 40px;
+      background: #4f46e5;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 18px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    h1 { font-size: 1.6rem; font-weight: 700; color: #111; }
+    .subtitle { color: #8b8b8b; font-size: 0.95rem; margin-left: 52px; }
+
+    /* tools */
+    .tools-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .tools-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #aaa;
+      margin-bottom: 0.85rem;
+    }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .tool-item {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      font-size: 0.9rem; color: #444;
+    }
+    .tool-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #4f46e5; flex-shrink: 0; margin-top: 5px;
+    }
+    .tool-name { font-weight: 600; color: #1a1a1a; font-size: 0.95rem; }
+    .tool-desc { font-size: 0.82rem; color: #999; margin-top: 0.1rem; }
+
+    /* input card */
+    .input-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .field { margin-bottom: 1.1rem; }
+    .field:last-child { margin-bottom: 0; }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 0.4rem;
+    }
+    input, textarea {
+      width: 100%;
+      background: #fafafa;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      color: #1a1a1a;
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 0.7rem 0.95rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus, textarea:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+      background: #fff;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+
+    .run-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: #4f46e5;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .run-btn:hover:not(:disabled) { background: #4338ca; }
+    .run-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    #status {
+      font-size: 0.85rem;
+      color: #aaa;
+      min-height: 1.2rem;
+      margin-top: 0.6rem;
+      text-align: center;
+    }
+
+    /* event stream */
+    .events { display: flex; flex-direction: column; gap: 0; margin-top: 2rem; }
+
+    .event {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      position: relative;
+    }
+    .event:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 30px;
+      bottom: -4px;
+      width: 1px;
+      background: #e8e8e8;
+    }
+
+    .ev-icon {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0; margin-top: 1px;
+      position: relative; z-index: 1;
+    }
+
+    .ev-body { flex: 1; }
+    .ev-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.25rem;
+    }
+    .ev-text { white-space: pre-wrap; word-break: break-word; }
+
+    /* thinking */
+    .ev-thinking .ev-icon { background: #f0f0f0; color: #999; }
+    .ev-thinking .ev-label { color: #bbb; }
+    .ev-thinking .ev-text { color: #999; font-size: 0.9rem; }
+
+    /* tool_call */
+    .ev-tool_call .ev-icon { background: #ede9fe; color: #6d28d9; }
+    .ev-tool_call .ev-label { color: #7c3aed; }
+    .ev-tool_call .ev-text { color: #444; font-family: 'Courier New', monospace; font-size: 0.88rem; }
+
+    /* tool_result */
+    .ev-tool_result .ev-icon { background: #d1fae5; color: #059669; }
+    .ev-tool_result .ev-label { color: #059669; }
+    .ev-tool_result .ev-text { color: #374151; }
+
+    /* answer */
+    .ev-answer {
+      background: #fafaff;
+      border: 1.5px solid #c7d2fe;
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      margin-top: 0.35rem;
+    }
+    .ev-answer::before { display: none; }
+    .ev-answer .ev-icon { background: #4f46e5; color: #fff; }
+    .ev-answer .ev-label { color: #4f46e5; }
+    .ev-answer .ev-text { color: #1e1b4b; font-weight: 500; font-size: 1.05rem; }
+
+    /* error */
+    .ev-error .ev-icon { background: #fee2e2; color: #b91c1c; }
+    .ev-error .ev-label { color: #dc2626; }
+    .ev-error .ev-text { color: #7f1d1d; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <div class="brand">
+        <div class="brand-mark">R</div>
+        <h1>raw-api-agent</h1>
+      </div>
+      <p class="subtitle">Goal-driven AI · raw Gemini function calling · SSE streaming</p>
+    </header>
+
+    <div class="tools-card">
+      <div class="tools-title">Available Tools</div>
+      <div class="tools-grid">
+        <div class="tool-item">
+          <div class="tool-dot"></div>
+          <div><div class="tool-name">web_search</div><div class="tool-desc">Search the web for current info</div></div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-dot"></div>
+          <div><div class="tool-name">calculate</div><div class="tool-desc">Safe math expression evaluator</div></div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-dot"></div>
+          <div><div class="tool-name">file_read</div><div class="tool-desc">Read files from workspace</div></div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-dot"></div>
+          <div><div class="tool-name">file_write</div><div class="tool-desc">Write files to workspace</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-card">
+      <div class="field">
+        <label for="apiKey">API Key</label>
+        <input type="password" id="apiKey" placeholder="Enter your API key" autocomplete="current-password" />
+      </div>
+      <div class="field">
+        <label for="goal">Goal</label>
+        <textarea id="goal" placeholder="Enter a goal — e.g. Calculate 15% of 2847 and write the result to report.txt"></textarea>
+      </div>
+    </div>
+
+    <button class="run-btn" id="runBtn" onclick="run()">Run Agent &nbsp;(Ctrl+Enter)</button>
+    <div id="status"></div>
+
+    <div class="events" id="events"></div>
+
+  </div>
+
+  <script>
+    async function run() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const goal   = document.getElementById('goal').value.trim();
+      const btn    = document.getElementById('runBtn');
+      const status = document.getElementById('status');
+      const feed   = document.getElementById('events');
+
+      if (!apiKey) { status.textContent = 'API key required.'; return; }
+      if (!goal)   { status.textContent = 'Goal required.';    return; }
+
+      feed.innerHTML = '';
+      btn.disabled = true;
+      status.textContent = 'Running…';
+
+      try {
+        const resp = await fetch('/agent/stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey },
+          body: JSON.stringify({ goal }),
+        });
+
+        if (!resp.ok) {
+          const body = await resp.json().catch(() => ({ detail: resp.statusText }));
+          const msg = Array.isArray(body.detail)
+            ? body.detail.map(e => e.msg).join('; ')
+            : String(body.detail);
+          status.textContent = `Error ${resp.status}: ${msg}`;
+          return;
+        }
+
+        const reader  = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+
+          const blocks = buf.split('\n\n');
+          buf = blocks.pop();
+
+          for (const block of blocks) {
+            if (!block.trim()) continue;
+            let type = '', data = '';
+            for (const line of block.split('\n')) {
+              if (line.startsWith('event: ')) type = line.slice(7).trim();
+              if (line.startsWith('data: '))  data = line.slice(6).trim();
+            }
+            if (type && data) renderEvent(type, JSON.parse(data));
+          }
+        }
+
+        status.textContent = 'Done.';
+      } catch (err) {
+        status.textContent = `Error: ${err.message}`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function renderEvent(type, data) {
+      const el = document.createElement('div');
+      el.className = `event ev-${type}`;
+
+      const icons = {
+        thinking:    { bg: '#f0f0f0', color: '#999',    glyph: '◎' },
+        tool_call:   { bg: '#ede9fe', color: '#6d28d9', glyph: '◆' },
+        tool_result: { bg: '#d1fae5', color: '#059669', glyph: '✓' },
+        answer:      { bg: '#4f46e5', color: '#fff',    glyph: '★' },
+        error:       { bg: '#fee2e2', color: '#b91c1c', glyph: '✕' },
+      };
+      const icon = icons[type] || { bg: '#e5e7eb', color: '#6b7280', glyph: '·' };
+
+      let label = '', text = '';
+
+      if (type === 'thinking') {
+        label = 'Thinking';
+        text  = data.message;
+      } else if (type === 'tool_call') {
+        label = `Tool Call · ${esc(data.tool)}`;
+        text  = JSON.stringify(data.args, null, 2);
+      } else if (type === 'tool_result') {
+        label = `Result · ${esc(data.tool)}`;
+        text  = data.result;
+      } else if (type === 'answer') {
+        label = 'Answer';
+        text  = data.content;
+      } else if (type === 'error') {
+        label = 'Error';
+        text  = data.message;
+      }
+
+      el.innerHTML = `
+        <div class="ev-icon" style="background:${icon.bg};color:${icon.color}">${icon.glyph}</div>
+        <div class="ev-body">
+          <div class="ev-label">${label}</div>
+          <div class="ev-text">${esc(text)}</div>
+        </div>`;
+
+      document.getElementById('events').appendChild(el);
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function esc(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    document.getElementById('goal').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) run();
+    });
+  </script>
+</body>
+</html>
