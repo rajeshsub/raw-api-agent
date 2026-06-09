@@ -1,0 +1,39 @@
+name: Sync to HF Space
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepend HF Space frontmatter to README
+        run: |
+          cat << 'FRONTMATTER' > /tmp/hf-readme.md
+          ---
+          title: Raw API Agent
+          emoji: 🤖
+          colorFrom: indigo
+          colorTo: purple
+          sdk: docker
+          app_port: 7860
+          pinned: false
+          ---
+
+          FRONTMATTER
+          cat README.md >> /tmp/hf-readme.md
+          cp /tmp/hf-readme.md README.md
+
+      - name: Push to HF Space
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git remote add space https://rajeshsub:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/rajeshsub/raw-api-agent
+          git add README.md
+          git commit -m "chore: add HF Space frontmatter" || true
+          git push space main --force

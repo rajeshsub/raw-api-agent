@@ -2,6 +2,8 @@
 
 Goal-driven AI agent built on raw Gemini function calling — no LangChain, no framework abstractions. Python 3.13 + FastAPI.
 
+**Live demo:** [huggingface.co/spaces/rajeshsub/raw-api-agent](https://huggingface.co/spaces/rajeshsub/raw-api-agent) — every push to `main` is automatically deployed.
+
 ![raw-api-agent demo](assets/raw-api-agent-demo.gif)
 
 ## What it does
