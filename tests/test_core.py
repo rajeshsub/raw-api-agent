@@ -16,11 +16,13 @@ def test_get_settings(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setenv("GEMINI_API_KEY", "key-abc")
     monkeypatch.setenv("API_KEY", "api-xyz")
+    monkeypatch.setenv("TAVILY_API_KEY", "tvly-xyz")
     get_settings.cache_clear()
     try:
         s = get_settings()
         assert s.gemini_api_key == "key-abc"
         assert s.api_key == "api-xyz"
+        assert s.tavily_api_key == "tvly-xyz"
         assert s.gemini_model == "gemini-2.5-flash"
     finally:
         get_settings.cache_clear()
@@ -242,79 +244,6 @@ async def test_generate_empty_tool_declarations() -> None:
 
 
 # ---------------------------------------------------------------------------
-# GeminiClient.search
-# ---------------------------------------------------------------------------
-
-
-async def test_search_returns_text() -> None:
-    client, inner = _make_client()
-    part = MagicMock()
-    part.text = "Top news today: cricket."
-    content = MagicMock()
-    content.parts = [part]
-    candidate = MagicMock()
-    candidate.content = content
-    resp = MagicMock()
-    resp.candidates = [candidate]
-    inner.aio.models.generate_content = AsyncMock(return_value=resp)
-
-    result = await client.search("India news today")
-    assert "cricket" in result
-
-
-async def test_search_no_candidates() -> None:
-    client, inner = _make_client()
-    resp = MagicMock()
-    resp.candidates = []
-    inner.aio.models.generate_content = AsyncMock(return_value=resp)
-
-    result = await client.search("something")
-    assert result == "No results found."
-
-
-async def test_search_no_content() -> None:
-    client, inner = _make_client()
-    candidate = MagicMock()
-    candidate.content = None
-    resp = MagicMock()
-    resp.candidates = [candidate]
-    inner.aio.models.generate_content = AsyncMock(return_value=resp)
-
-    result = await client.search("something")
-    assert result == "No results found."
-
-
-async def test_search_empty_parts() -> None:
-    client, inner = _make_client()
-    content = MagicMock()
-    content.parts = []
-    candidate = MagicMock()
-    candidate.content = content
-    resp = MagicMock()
-    resp.candidates = [candidate]
-    inner.aio.models.generate_content = AsyncMock(return_value=resp)
-
-    result = await client.search("something")
-    assert result == "No results found."
-
-
-async def test_search_no_text_in_parts() -> None:
-    client, inner = _make_client()
-    part = MagicMock()
-    part.text = None
-    content = MagicMock()
-    content.parts = [part]
-    candidate = MagicMock()
-    candidate.content = content
-    resp = MagicMock()
-    resp.candidates = [candidate]
-    inner.aio.models.generate_content = AsyncMock(return_value=resp)
-
-    result = await client.search("something")
-    assert result == "No results found."
-
-
-# ---------------------------------------------------------------------------
 # get_gemini_client
 # ---------------------------------------------------------------------------
 
@@ -323,7 +252,7 @@ def test_get_gemini_client() -> None:
     from app.core.config import Settings
     from app.core.gemini import get_gemini_client
 
-    settings = Settings(gemini_api_key="gk", api_key="ak")
+    settings = Settings(gemini_api_key="gk", api_key="ak", tavily_api_key="tk")
     with (
         patch("app.core.config.get_settings", return_value=settings),
         patch("google.genai.Client"),

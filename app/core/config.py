@@ -15,6 +15,7 @@ class Settings(BaseSettings):
 
     gemini_api_key: str
     api_key: str
+    tavily_api_key: str
     gemini_model: str = "gemini-2.5-flash"
     agent_workspace: Path = Path("./workspace")
     max_agent_iterations: int = 10

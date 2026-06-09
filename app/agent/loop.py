@@ -64,7 +64,9 @@ async def _run_loop(
     settings: Settings,
     gemini: GeminiClient,
 ) -> AgentResult:
-    tool_map = build_tool_registry(workspace=settings.agent_workspace, gemini=gemini)
+    tool_map = build_tool_registry(
+        workspace=settings.agent_workspace, tavily_api_key=settings.tavily_api_key
+    )
     declarations = [t.declaration() for t in tool_map.values()]
     messages: list[types.Content] = [
         types.Content(role="user", parts=[types.Part(text=goal)])
@@ -123,7 +125,7 @@ async def _stream_loop(
     structlog.contextvars.bind_contextvars(correlation_id=correlation_id)
     try:
         tool_map = build_tool_registry(
-            workspace=settings.agent_workspace, gemini=gemini
+            workspace=settings.agent_workspace, tavily_api_key=settings.tavily_api_key
         )
         declarations = [t.declaration() for t in tool_map.values()]
         messages: list[types.Content] = [

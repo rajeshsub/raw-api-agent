@@ -25,6 +25,7 @@ def settings(workspace: Path) -> Settings:
     return Settings(
         gemini_api_key="test-gemini-key",
         api_key=TEST_API_KEY,
+        tavily_api_key="test-tavily-key",
         agent_workspace=workspace,
         max_agent_iterations=5,
     )

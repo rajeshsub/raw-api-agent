@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -156,40 +155,52 @@ async def test_file_write_declaration(workspace: Path) -> None:
 
 
 async def test_web_search_success() -> None:
-    gemini = MagicMock()
-    gemini.search = AsyncMock(return_value="Top news: India wins cricket match.")
-    tool = WebSearchTool(gemini=gemini)
-    result = await tool.run(query="latest India news")
+    from unittest.mock import patch
+
+    fake_response = {
+        "results": [
+            {
+                "title": "India wins cricket match",
+                "url": "https://example.com",
+                "content": "India beat Australia.",
+            },
+        ]
+    }
+    with patch("app.agent.tools.web_search.TavilyClient") as MockClient:
+        MockClient.return_value.search.return_value = fake_response
+        tool = WebSearchTool(tavily_api_key="test-key")
+        result = await tool.run(query="latest India news")
     assert result.success is True
     assert "India" in result.output
-    gemini.search.assert_awaited_once_with("latest India news")
 
 
 async def test_web_search_empty_query() -> None:
-    tool = WebSearchTool(gemini=MagicMock())
+    tool = WebSearchTool(tavily_api_key="test-key")
     result = await tool.run(query="")
     assert result.success is False
     assert result.error == "query is required"
 
 
 async def test_web_search_missing_query() -> None:
-    tool = WebSearchTool(gemini=MagicMock())
+    tool = WebSearchTool(tavily_api_key="test-key")
     result = await tool.run()
     assert result.success is False
     assert result.error == "query is required"
 
 
-async def test_web_search_gemini_error() -> None:
-    gemini = MagicMock()
-    gemini.search = AsyncMock(side_effect=RuntimeError("API down"))
-    tool = WebSearchTool(gemini=gemini)
-    result = await tool.run(query="news")
+async def test_web_search_tavily_error() -> None:
+    from unittest.mock import patch
+
+    with patch("app.agent.tools.web_search.TavilyClient") as MockClient:
+        MockClient.return_value.search.side_effect = RuntimeError("API down")
+        tool = WebSearchTool(tavily_api_key="test-key")
+        result = await tool.run(query="news")
     assert result.success is False
     assert "API down" in (result.error or "")
 
 
 async def test_web_search_declaration() -> None:
-    tool = WebSearchTool(gemini=MagicMock())
+    tool = WebSearchTool(tavily_api_key="test-key")
     decl = tool.declaration()
     assert decl.name == "web_search"
 

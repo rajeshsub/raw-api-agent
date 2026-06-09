@@ -94,28 +94,6 @@ class GeminiClient:
             thoughts=thoughts,
         )
 
-    async def search(self, query: str) -> str:
-        config = types.GenerateContentConfig(
-            tools=[types.Tool(google_search=types.GoogleSearch())],
-            temperature=0.1,
-        )
-        response = await self._client.aio.models.generate_content(
-            model=self._model,
-            contents=[types.Content(role="user", parts=[types.Part(text=query)])],
-            config=config,
-        )
-        candidates = response.candidates
-        if not candidates:
-            return "No results found."
-        raw_content = candidates[0].content
-        if not raw_content or not raw_content.parts:
-            return "No results found."
-        text = ""
-        for part in raw_content.parts:
-            if part.text:
-                text += part.text
-        return text or "No results found."
-
 
 def get_gemini_client() -> GeminiClient:
     from app.core.config import get_settings

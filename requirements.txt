@@ -4,4 +4,5 @@ google-genai==2.8.0
 pydantic-settings==2.14.1
 structlog==26.1.0
 simpleeval==1.0.7
+tavily-python==0.7.25
 python-multipart==0.0.32

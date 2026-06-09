@@ -35,6 +35,7 @@ Agent Loop:
 
 | Tool | Description |
 |---|---|
+| `web_search` | Search the web via Tavily API — explicit tool call, fully visible in SSE stream |
 | `file_read` | Read a file from workspace (sandboxed, no path traversal) |
 | `file_write` | Write a file to workspace (creates parent dirs) |
 | `calculate` | Evaluate math expressions safely via simpleeval (supports sqrt, trig, log) |
@@ -96,6 +97,7 @@ make dev
 |---|---|
 | `GEMINI_API_KEY` | [Google AI Studio](https://aistudio.google.com) |
 | `API_KEY` | Choose any secret string — used for `X-API-Key` header auth |
+| `TAVILY_API_KEY` | [Tavily](https://tavily.com) — free tier available |
 
 ## Example goals
 
