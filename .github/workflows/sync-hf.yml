@@ -12,8 +12,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Prepend HF Space frontmatter to README
+      - name: Push to HF Space
         run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+
+          # Build README with HF frontmatter
           cat << 'FRONTMATTER' > /tmp/hf-readme.md
           ---
           title: Raw API Agent
@@ -27,13 +31,14 @@ jobs:
 
           FRONTMATTER
           cat README.md >> /tmp/hf-readme.md
-          cp /tmp/hf-readme.md README.md
 
-      - name: Push to HF Space
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-          git remote add space https://rajeshsub:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/rajeshsub/raw-api-agent
+          # Orphan branch — single commit, no history, no large files
+          git checkout --orphan hf-deploy
+          git rm -rf --cached .
+          git add app/ requirements.txt Dockerfile .dockerignore
+          cp /tmp/hf-readme.md README.md
           git add README.md
-          git commit -m "chore: add HF Space frontmatter" || true
-          git push space main --force
+          git commit -m "Deploy to HF Space"
+
+          git remote add space https://rajeshsub:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/rajeshsub/raw-api-agent
+          git push space hf-deploy:main --force
