@@ -6,6 +6,7 @@
   <title>raw-api-agent</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -193,6 +194,13 @@
     .ev-answer .ev-icon { background: #4f46e5; color: #fff; }
     .ev-answer .ev-label { color: #4f46e5; }
     .ev-answer .ev-text { color: #1e1b4b; font-weight: 500; font-size: 1.05rem; }
+    .ev-answer .ev-text p { margin-bottom: 0.6rem; }
+    .ev-answer .ev-text p:last-child { margin-bottom: 0; }
+    .ev-answer .ev-text ul, .ev-answer .ev-text ol { padding-left: 1.4rem; margin-bottom: 0.6rem; }
+    .ev-answer .ev-text li { margin-bottom: 0.25rem; }
+    .ev-answer .ev-text strong { font-weight: 700; }
+    .ev-answer .ev-text h1, .ev-answer .ev-text h2, .ev-answer .ev-text h3 { font-weight: 700; margin: 0.8rem 0 0.4rem; }
+    .ev-answer .ev-text code { background: #ede9fe; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
 
     /* error */
     .ev-error .ev-icon { background: #fee2e2; color: #b91c1c; }
@@ -345,11 +353,15 @@
         text  = data.message;
       }
 
+      const textHtml = type === 'answer'
+        ? marked.parse(text)
+        : esc(text);
+
       el.innerHTML = `
         <div class="ev-icon" style="background:${icon.bg};color:${icon.color}">${icon.glyph}</div>
         <div class="ev-body">
           <div class="ev-label">${label}</div>
-          <div class="ev-text">${esc(text)}</div>
+          <div class="ev-text">${textHtml}</div>
         </div>`;
 
       document.getElementById('events').appendChild(el);
