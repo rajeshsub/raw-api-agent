@@ -28,5 +28,6 @@ def build_tool_registry(
         WebSearchTool(tavily_api_key=tavily_api_key),
     ]
     if enabled_tools is not None:
-        all_tools = [t for t in all_tools if t.name in enabled_tools]
+        enabled_set = set(enabled_tools)
+        all_tools = [t for t in all_tools if t.name in enabled_set]
     return {t.name: t for t in all_tools}

@@ -25,7 +25,7 @@ async def run_agent(
 ) -> AgentResult:
     return await loop.run(
         goal=body.goal,
-        enabled_tools=body.enabled_tools or None,
+        enabled_tools=body.enabled_tools,
         settings=settings,
         gemini=gemini,
     )
@@ -40,7 +40,7 @@ async def stream_agent(
 ) -> StreamingResponse:
     event_stream = loop.stream(
         goal=body.goal,
-        enabled_tools=body.enabled_tools or None,
+        enabled_tools=body.enabled_tools,
         settings=settings,
         gemini=gemini,
     )

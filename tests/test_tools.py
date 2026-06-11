@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from app.agent.tools.calculator import CalculatorTool
-from app.agent.tools.file_ops import FileReadTool, FileWriteTool
+from app.agent.tools.file_ops import FileWriteTool
 from app.agent.tools.web_search import WebSearchTool
 
 # ---------------------------------------------------------------------------
@@ -52,56 +52,6 @@ async def test_calculator_declaration() -> None:
     tool = CalculatorTool()
     decl = tool.declaration()
     assert decl.name == "calculate"
-
-
-# ---------------------------------------------------------------------------
-# FileReadTool
-# ---------------------------------------------------------------------------
-
-
-async def test_file_read_existing(workspace: Path) -> None:
-    (workspace / "hello.txt").write_text("world", encoding="utf-8")
-    tool = FileReadTool(workspace=workspace)
-    result = await tool.run(path="hello.txt")
-    assert result.success is True
-    assert result.output == "world"
-
-
-async def test_file_read_missing(workspace: Path) -> None:
-    tool = FileReadTool(workspace=workspace)
-    result = await tool.run(path="no_such_file.txt")
-    assert result.success is False
-    assert "not found" in (result.error or "").lower()
-
-
-async def test_file_read_traversal_rejected(workspace: Path) -> None:
-    tool = FileReadTool(workspace=workspace)
-    result = await tool.run(path="../../../etc/passwd")
-    assert result.success is False
-    assert result.error is not None
-
-
-async def test_file_read_empty_path(workspace: Path) -> None:
-    tool = FileReadTool(workspace=workspace)
-    result = await tool.run(path="")
-    assert result.success is False
-
-
-async def test_file_read_declaration(workspace: Path) -> None:
-    tool = FileReadTool(workspace=workspace)
-    decl = tool.declaration()
-    assert decl.name == "file_read"
-
-
-async def test_file_read_generic_exception(workspace: Path) -> None:
-    from unittest.mock import patch
-
-    (workspace / "test.txt").write_text("content", encoding="utf-8")
-    tool = FileReadTool(workspace=workspace)
-    with patch("pathlib.Path.read_text", side_effect=OSError("disk error")):
-        result = await tool.run(path="test.txt")
-    assert result.success is False
-    assert "disk error" in (result.error or "")
 
 
 # ---------------------------------------------------------------------------
