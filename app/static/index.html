@@ -37,15 +37,15 @@
     h1 { font-size: 1.6rem; font-weight: 700; color: #111; }
     .subtitle { color: #8b8b8b; font-size: 0.95rem; margin-left: 52px; }
 
-    /* tools */
-    .tools-card {
+    /* how-to card */
+    .howto-card {
       background: #fff;
       border: 1px solid #e8e8e8;
       border-radius: 12px;
       padding: 1.25rem 1.5rem;
       margin-bottom: 1.25rem;
     }
-    .tools-title {
+    .card-title {
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
@@ -53,21 +53,90 @@
       color: #aaa;
       margin-bottom: 0.85rem;
     }
+    .howto-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .howto-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      color: #444;
+      line-height: 1.5;
+    }
+    .step-num {
+      min-width: 22px; height: 22px;
+      background: #ede9fe;
+      color: #6d28d9;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* tools card */
+    .tools-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
     .tools-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
+      gap: 0.75rem;
     }
     .tool-item {
-      display: flex; align-items: flex-start; gap: 0.6rem;
-      font-size: 0.9rem; color: #444;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      background: #fafafa;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 8px;
+      transition: border-color 0.15s, background 0.15s;
     }
-    .tool-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #4f46e5; flex-shrink: 0; margin-top: 5px;
+    .tool-item.enabled {
+      border-color: #c7d2fe;
+      background: #f5f3ff;
     }
-    .tool-name { font-weight: 600; color: #1a1a1a; font-size: 0.95rem; }
-    .tool-desc { font-size: 0.82rem; color: #999; margin-top: 0.1rem; }
+    .tool-info { flex: 1; min-width: 0; }
+    .tool-name { font-weight: 600; color: #1a1a1a; font-size: 0.9rem; }
+    .tool-desc { font-size: 0.78rem; color: #999; margin-top: 0.1rem; }
+
+    /* toggle switch */
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: #d1d5db;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: #4f46e5; }
+    .toggle-thumb {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 14px; height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      pointer-events: none;
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(16px); }
 
     /* input card */
     .input-card {
@@ -182,6 +251,26 @@
     .ev-tool_result .ev-label { color: #059669; }
     .ev-tool_result .ev-text { color: #374151; }
 
+    /* download button */
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.85rem;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .download-btn:hover { background: #4338ca; }
+    .download-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
     /* answer */
     .ev-answer {
       background: #fafaff;
@@ -219,24 +308,63 @@
       <p class="subtitle">Goal-driven AI · raw Gemini function calling · SSE streaming</p>
     </header>
 
+    <div class="howto-card">
+      <div class="card-title">How to Use</div>
+      <div class="howto-steps">
+        <div class="howto-step">
+          <div class="step-num">1</div>
+          <span>Enable the tools required for your task using the toggles below.</span>
+        </div>
+        <div class="howto-step">
+          <div class="step-num">2</div>
+          <span>Type a query for the agent that will use one or more of the selected tools.</span>
+        </div>
+        <div class="howto-step">
+          <div class="step-num">3</div>
+          <span>Enter your API key and submit the query.</span>
+        </div>
+        <div class="howto-step">
+          <div class="step-num">4</div>
+          <span>Watch the agent thinking and taking action in real time. If the agent writes a file, a download button will appear.</span>
+        </div>
+      </div>
+    </div>
+
     <div class="tools-card">
-      <div class="tools-title">Available Tools</div>
-      <div class="tools-grid">
-        <div class="tool-item">
-          <div class="tool-dot"></div>
-          <div><div class="tool-name">web_search</div><div class="tool-desc">Tavily search — explicit tool call, fully visible</div></div>
+      <div class="card-title">Tools</div>
+      <div class="tools-grid" id="toolsGrid">
+        <div class="tool-item" id="item-web_search">
+          <div class="tool-info">
+            <div class="tool-name">web_search</div>
+            <div class="tool-desc">Tavily search — live internet results</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-web_search" onchange="onToolToggle(this)" />
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
         </div>
-        <div class="tool-item">
-          <div class="tool-dot"></div>
-          <div><div class="tool-name">calculate</div><div class="tool-desc">Safe math expression evaluator</div></div>
+        <div class="tool-item" id="item-calculate">
+          <div class="tool-info">
+            <div class="tool-name">calculate</div>
+            <div class="tool-desc">Safe math expression evaluator</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-calculate" onchange="onToolToggle(this)" />
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
         </div>
-        <div class="tool-item">
-          <div class="tool-dot"></div>
-          <div><div class="tool-name">file_read</div><div class="tool-desc">Read files from workspace</div></div>
-        </div>
-        <div class="tool-item">
-          <div class="tool-dot"></div>
-          <div><div class="tool-name">file_write</div><div class="tool-desc">Write files to workspace</div></div>
+        <div class="tool-item" id="item-file_write">
+          <div class="tool-info">
+            <div class="tool-name">file_write</div>
+            <div class="tool-desc">Write files — downloadable after creation</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-file_write" onchange="onToolToggle(this)" />
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
         </div>
       </div>
     </div>
@@ -248,7 +376,7 @@
       </div>
       <div class="field">
         <label for="goal">Goal</label>
-        <textarea id="goal" placeholder="Enter a goal — e.g. Calculate 15% of 2847 and write the result to report.txt"></textarea>
+        <textarea id="goal" placeholder="Enter a goal — e.g. Search for today's top news headlines and write a summary to news.txt"></textarea>
       </div>
     </div>
 
@@ -260,6 +388,21 @@
   </div>
 
   <script>
+    function onToolToggle(checkbox) {
+      const toolName = checkbox.id.replace('toggle-', '');
+      const item = document.getElementById('item-' + toolName);
+      if (checkbox.checked) {
+        item.classList.add('enabled');
+      } else {
+        item.classList.remove('enabled');
+      }
+    }
+
+    function getEnabledTools() {
+      return ['web_search', 'calculate', 'file_write']
+        .filter(name => document.getElementById('toggle-' + name).checked);
+    }
+
     async function run() {
       const apiKey = document.getElementById('apiKey').value.trim();
       const goal   = document.getElementById('goal').value.trim();
@@ -270,6 +413,8 @@
       if (!apiKey) { status.textContent = 'API key required.'; return; }
       if (!goal)   { status.textContent = 'Goal required.';    return; }
 
+      const enabledTools = getEnabledTools();
+
       feed.innerHTML = '';
       btn.disabled = true;
       status.textContent = 'Running…';
@@ -278,7 +423,7 @@
         const resp = await fetch('/agent/stream', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey },
-          body: JSON.stringify({ goal }),
+          body: JSON.stringify({ goal, enabled_tools: enabledTools }),
         });
 
         if (!resp.ok) {
@@ -309,7 +454,7 @@
               if (line.startsWith('event: ')) type = line.slice(7).trim();
               if (line.startsWith('data: '))  data = line.slice(6).trim();
             }
-            if (type && data) renderEvent(type, JSON.parse(data));
+            if (type && data) renderEvent(type, JSON.parse(data), apiKey);
           }
         }
 
@@ -321,7 +466,7 @@
       }
     }
 
-    function renderEvent(type, data) {
+    function renderEvent(type, data, apiKey) {
       const el = document.createElement('div');
       el.className = `event ev-${type}`;
 
@@ -334,7 +479,7 @@
       };
       const icon = icons[type] || { bg: '#e5e7eb', color: '#6b7280', glyph: '·' };
 
-      let label = '', text = '';
+      let label = '', text = '', extraHtml = '';
 
       if (type === 'thinking') {
         label = 'Thinking';
@@ -345,6 +490,13 @@
       } else if (type === 'tool_result') {
         label = `Result · ${esc(data.tool)}`;
         text  = data.result;
+        if (data.tool === 'file_write' && data.result && !data.result.startsWith('Error')) {
+          const match = data.result.match(/to (.+)$/);
+          if (match) {
+            const filePath = match[1].trim();
+            extraHtml = `<button class="download-btn" onclick="downloadFile(this, '${esc(filePath)}', '${esc(apiKey)}')">&#8595; Download ${esc(filePath)}</button>`;
+          }
+        }
       } else if (type === 'answer') {
         label = 'Answer';
         text  = data.content;
@@ -362,17 +514,43 @@
         <div class="ev-body">
           <div class="ev-label">${label}</div>
           <div class="ev-text">${textHtml}</div>
+          ${extraHtml}
         </div>`;
 
       document.getElementById('events').appendChild(el);
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    async function downloadFile(btn, filePath, apiKey) {
+      btn.disabled = true;
+      btn.textContent = 'Downloading…';
+      try {
+        const resp = await fetch(`/agent/workspace/${encodeURIComponent(filePath)}`, {
+          headers: { 'X-API-Key': apiKey },
+        });
+        if (!resp.ok) {
+          btn.textContent = 'Download failed';
+          return;
+        }
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filePath.split('/').pop();
+        a.click();
+        URL.revokeObjectURL(url);
+        btn.textContent = '✓ Downloaded';
+      } catch (err) {
+        btn.textContent = 'Download failed';
+      }
+    }
+
     function esc(s) {
       return String(s ?? '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
 
     document.getElementById('goal').addEventListener('keydown', e => {

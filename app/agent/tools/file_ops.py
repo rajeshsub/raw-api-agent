@@ -23,45 +23,6 @@ class _FileToolBase(Tool):
         return resolved
 
 
-class FileReadTool(_FileToolBase):
-    name = "file_read"
-    description = "Read contents of a file from the workspace directory."
-
-    async def run(self, **kwargs: Any) -> ToolResult:
-        path_str = str(kwargs.get("path", "")).strip()
-        if not path_str:
-            return ToolResult(success=False, output="", error="path is required")
-
-        try:
-            safe = self._safe_path(path_str)
-            content = safe.read_text(encoding="utf-8")
-            return ToolResult(success=True, output=content)
-        except ToolSecurityError as exc:
-            return ToolResult(success=False, output="", error=str(exc))
-        except FileNotFoundError:
-            return ToolResult(
-                success=False, output="", error=f"File not found: {path_str}"
-            )
-        except Exception as exc:
-            return ToolResult(success=False, output="", error=str(exc))
-
-    def declaration(self) -> types.FunctionDeclaration:
-        return types.FunctionDeclaration(
-            name=self.name,
-            description=self.description,
-            parameters=types.Schema(
-                type=types.Type.OBJECT,
-                properties={
-                    "path": types.Schema(
-                        type=types.Type.STRING,
-                        description="Relative path from workspace root.",
-                    )
-                },
-                required=["path"],
-            ),
-        )
-
-
 class FileWriteTool(_FileToolBase):
     name = "file_write"
     description = (

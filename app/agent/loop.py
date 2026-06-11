@@ -33,6 +33,7 @@ def _tool_results_content(results: list[tuple[str, str]]) -> types.Content:
 
 async def run(
     goal: str,
+    enabled_tools: list[str] | None = None,
     settings: Settings | None = None,
     gemini: GeminiClient | None = None,
 ) -> AgentResult:
@@ -40,6 +41,7 @@ async def run(
     with bind_correlation_id(correlation_id):
         return await _run_loop(
             goal=goal,
+            enabled_tools=enabled_tools,
             settings=settings or get_settings(),
             gemini=gemini or get_gemini_client(),
         )
@@ -47,12 +49,14 @@ async def run(
 
 def stream(
     goal: str,
+    enabled_tools: list[str] | None = None,
     settings: Settings | None = None,
     gemini: GeminiClient | None = None,
 ) -> AsyncGenerator[SSEEvent]:
     correlation_id = str(uuid.uuid4())
     return _stream_loop(
         goal=goal,
+        enabled_tools=enabled_tools,
         correlation_id=correlation_id,
         settings=settings or get_settings(),
         gemini=gemini or get_gemini_client(),
@@ -63,9 +67,12 @@ async def _run_loop(
     goal: str,
     settings: Settings,
     gemini: GeminiClient,
+    enabled_tools: list[str] | None = None,
 ) -> AgentResult:
     tool_map = build_tool_registry(
-        workspace=settings.agent_workspace, tavily_api_key=settings.tavily_api_key
+        workspace=settings.agent_workspace,
+        tavily_api_key=settings.tavily_api_key,
+        enabled_tools=enabled_tools,
     )
     declarations = [t.declaration() for t in tool_map.values()]
     messages: list[types.Content] = [
@@ -121,11 +128,14 @@ async def _stream_loop(
     correlation_id: str,
     settings: Settings,
     gemini: GeminiClient,
+    enabled_tools: list[str] | None = None,
 ) -> AsyncGenerator[SSEEvent]:
     structlog.contextvars.bind_contextvars(correlation_id=correlation_id)
     try:
         tool_map = build_tool_registry(
-            workspace=settings.agent_workspace, tavily_api_key=settings.tavily_api_key
+            workspace=settings.agent_workspace,
+            tavily_api_key=settings.tavily_api_key,
+            enabled_tools=enabled_tools,
         )
         declarations = [t.declaration() for t in tool_map.values()]
         messages: list[types.Content] = [

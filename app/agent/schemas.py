@@ -7,6 +7,7 @@ from pydantic import BaseModel, field_validator
 
 class GoalRequest(BaseModel):
     goal: str
+    enabled_tools: list[str] = []
 
     @field_validator("goal")
     @classmethod

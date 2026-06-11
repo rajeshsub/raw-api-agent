@@ -37,7 +37,7 @@ class WebSearchTool(Tool):
                 lines.append(f"   URL: {r.get('url', '')}")
                 content = r.get("content", "")
                 if content:
-                    lines.append(f"   {textwrap.shorten(content, width=300)}")
+                    lines.append(f"   {textwrap.shorten(content, width=800)}")
             return ToolResult(success=True, output="\n".join(lines))
         except Exception as exc:
             return ToolResult(success=False, output="", error=f"Search failed: {exc}")
